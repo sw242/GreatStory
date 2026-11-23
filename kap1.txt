@@ -1,2 +1,182 @@
-Kap1.txt
+Connect to proxmox on node: 
+
+https://proxmox10.fritz.box:8006/ 
+
+https://192.168.10.10 
+
+ 
+
+User name: root 
+
+Passwort: bekannt 
+
+ 
+
+Shell commands: 
+
+ 
+
+pct enter 101 
+
+-> open the terminal on node 101 
+
+ 
+
+ 
+
+Linux: 
+
+cat /etc/os-release 
+
+-> print os version on terminal 
+
+ 
+
+which step 
+
+-> print path to executable step (based on PATH) 
+
+ 
+
+echo $PATH 
+
+-> print content of environment variable PATH 
+
+ 
+
+python3 -m http.server 8080 
+
+-> start http server in a folder 
+
+-> in web browser: http://192.168.10.11:8080/root_ca.crt to download certificate 
+
+ 
+
+ 
+
+tar -czvf /root/dotstep-backup.tar.gz /root/.step 
+
+-c neues Archiv erstellen 
+
+-z gzip-Komprimierung 
+
+-v Dateinamen anzeigen 
+
+-f Dateiname folgt 
+
+ 
+
+ 
+
+ 
+
+Step-cli und ca installieren 
+
+curl -LO https://dl.smallstep.com/gh-release/cli/gh-release-header/v0.31.0/step_linux_0.31.0_amd64.tar.gz 
+
+-> Download des Packages 
+
+ 
+
+tar -xzf step_linux_0.31.0_amd64.tar.gz 
+
+-> Auspacken 
+
+ 
+
+cp step_0.31.0/bin/step /usr/local/bin/ 
+
+chmod +x /usr/local/bin/step 
+
+-> Systemweit installieren 
+
+ 
+
+step version 
+
+-> show version info for step 
+
+ 
+
+ 
+
+#Automatischer Start per systemd 
+
+mkdir -p /etc/step-ca 
+
+nano /etc/step-ca/password.txt 
+
+chmod 600 /etc/step-ca/password.txt 
+
+// Test 
+
+step-ca ~/.step/config/ca.json --password-file /etc/step-ca/password.txt 
+
+(starts CA without asking for password) 
+
+ 
+
+nano /etc/systemd/system/step-ca.service 
+
+[Unit] 
+
+Description=Smallstep Certificate Authority 
+
+After=network.target 
+
+ 
+
+[Service] 
+
+Type=simple 
+
+ExecStart=/usr/local/bin/step-ca /root/.step/config/ca.json \ 
+
+  --password-file /etc/step-ca/password.txt 
+
+Restart=always 
+
+RestartSec=5 
+
+ 
+
+[Install] 
+
+WantedBy=multi-user.target 
+
+ 
+
+//Load & activate 
+
+systemctl daemon-reload 
+
+systemctl enable step-ca 
+
+systemctl start step-ca 
+
+ 
+
+//Check status 
+
+systemctl status step-ca 
+
+ 
+
+// Root -Zertifikat der CA auf Client installieren 
+
+pct pull 101 /root/.step/certs/root_ca.crt /root/root_ca.crt 
+
+ 
+
+#Root-CA im Debian-Zertifikatsspeicher installieren 
+
+cp /root/root_ca.crt /usr/local/share/ca-certificates/step-home-ca.crt 
+
+update-ca-certificates 
+
+ 
+
+# Test -> liefert JSON antwort (sonst nur bei curl -k …) 
+
+curl https://ca.fritz.box/acme/acme/directory 
 
