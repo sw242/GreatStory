@@ -1,121 +1,47 @@
-Connect to proxmox on node: 
+# Step-cli und ca installieren 
 
-https://proxmox10.fritz.box:8006/ 
-
-https://192.168.10.10 
-
- 
-
-User name: root 
-
-Passwort: bekannt 
-
- 
-
-Shell commands: 
-
- 
-
-pct enter 101 
-
--> open the terminal on node 101 
-
- 
-
- 
-
-Linux: 
-
-cat /etc/os-release 
-
--> print os version on terminal 
-
- 
-
-which step 
-
--> print path to executable step (based on PATH) 
-
- 
-
-echo $PATH 
-
--> print content of environment variable PATH 
-
- 
-
-python3 -m http.server 8080 
-
--> start http server in a folder 
-
--> in web browser: http://192.168.10.11:8080/root_ca.crt to download certificate 
-
- 
-
- 
-
-tar -czvf /root/dotstep-backup.tar.gz /root/.step 
-
--c neues Archiv erstellen 
-
--z gzip-Komprimierung 
-
--v Dateinamen anzeigen 
-
--f Dateiname folgt 
-
- 
-
- 
-
- 
-
-Step-cli und ca installieren 
-
+## Step client
+### Download of package
 curl -LO https://dl.smallstep.com/gh-release/cli/gh-release-header/v0.31.0/step_linux_0.31.0_amd64.tar.gz 
 
--> Download des Packages 
-
- 
-
+### Extract
 tar -xzf step_linux_0.31.0_amd64.tar.gz 
 
--> Auspacken 
-
- 
-
+### Install system-wide
+__Copy binary to /usr/local/bin__<br>
 cp step_0.31.0/bin/step /usr/local/bin/ 
 
+__Make executable__<br>
 chmod +x /usr/local/bin/step 
 
--> Systemweit installieren 
-
- 
-
+### Test 
+__Show version info__<br>
 step version 
 
--> show version info for step 
+## Step CA
+### Download of package
+TODO
 
- 
+# Auto start per systemd 
+## Strategy: store CA password in password file.
 
- 
-
-#Automatischer Start per systemd 
-
+__Create folder for password file__<br>
 mkdir -p /etc/step-ca 
 
+__Create password file and enter password__<br>
 nano /etc/step-ca/password.txt 
 
+__Limit access to owner 'root'__<br>
 chmod 600 /etc/step-ca/password.txt 
 
-// Test 
+## Test 
 
 step-ca ~/.step/config/ca.json --password-file /etc/step-ca/password.txt 
 
 (starts CA without asking for password) 
 
  
-
+## Create systemd configuration
 nano /etc/systemd/system/step-ca.service 
 
 [Unit] 
