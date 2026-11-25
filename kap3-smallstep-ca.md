@@ -68,7 +68,7 @@ systemctl start step-ca
 #### Check status 
 `systemctl status step-ca `
 
-## Install root certificate of the CA on the clientinstallieren 
+## Install root certificate of the CA on the client 
 
 ### Transfer root certificat
 `pct pull 101 /root/.step/certs/root_ca.crt /root/root_ca.crt`
@@ -80,7 +80,64 @@ cp /root/root_ca.crt /usr/local/share/ca-certificates/step-home-ca.crt
 update-ca-certificates
 ```
 
+## Create certificate for the client
+- Create certificate on the CA node for the client proxmox10.fritz.box \
+with a validity of 90 days. This will create the named crt and the key file<br>
+```
+step ca certificate \
+  --not-after=2160h \
+  proxmox10.fritz.box \
+  proxmox10.crt \
+  proxmox10.key
+```
+- Check the generated certificate, e. g. the validity<br>
+`step certificate inspect /root/certs/proxmox10.crt`
+
+
+- The pveserver will use the certificate in the communication with the web browser. Therefore, we need to install them on the proxmox server (proxmox10)
+
+- On proxmox10, copy the certificates from the CA node (101) and store them \
+under /root<br>
+```
+pct pull 101 /root/certs/proxmox10.crt /root/proxmox10.crt
+pct pull 101 /root/certs/proxmox10.key /root/proxmox10.key
+```
+- Now install (make a backup of the existing certificates):<br>
+```
+cp /root/proxmox10.crt /etc/pve/local/pve-ssl.pem
+cp /root/proxmox10.key /etc/pve/local/pve-ssl.key
+```
+- Restart the web proxy:<br>
+`systemctl restart pveproxy`
+
+- Check status:<br>
+`systemctl status pveproxy`
+
+- Call proxmox10 pveserver from web browser:<br>
+`https://proxmox10.fritz.box:8006`
+- If everything is correct, there will be no data protection error and the \
+browser will show the "lock" icon
+
 ## Setup ACME on step CA
+### Activate ACME on CA
+- Check if ACME is already activated in ca.json:<br>
+`grep -i acme ~/.step/config/ca.json`
+- If no output, ACME provisioner needs to be added/created
+
+- Create ACME provisioner<br>
+`step ca provisioner add acme --type ACME`
+
+- Verify:<br>
+`step ca provisioner list`
+- Output should show acme beside the JWK provisioner
+
+- Then, restart CA:<br>
+`systemctl restart step-ca`
+
+- Test on command line:<br>
+`curl -k https://ca.fritz.box/acme/acme/directory`
+- Should return JSON data, no error 404
+
 ### Preconditions
 - ACME activated on CA<br>
 Test -> liefert JSON antwort (sonst nur bei curl -k …)<br>
