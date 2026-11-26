@@ -228,3 +228,52 @@ server {
 - Test in web browser:<br>
 https://retinento-test.fritz.box
 
+## Setup ACME certificate update
+
+root@retinento-test:~# systemctl stop nginx
+root@retinento-test:~# acme.sh \
+  --server https://ca.fritz.box/acme/acme/directory \
+  --issue \
+  -d retinento-test.fritz.box \
+  --standalone
+[Thu Nov 26 17:32:19 UTC 2026] Using CA: https://ca.fritz.box/acme/acme/directory
+[Thu Nov 26 17:32:19 UTC 2026] Standalone mode.
+[Thu Nov 26 17:32:19 UTC 2026] Account key creation OK.
+[Thu Nov 26 17:32:19 UTC 2026] Registering account: https://ca.fritz.box/acme/acme/directory
+[Thu Nov 26 17:32:19 UTC 2026] Registered
+[Thu Nov 26 17:32:19 UTC 2026] ACCOUNT_THUMBPRINT='WPA4Quco1fOuUXO7YRl3I7ABiY07xlIl-a1Z65uIqnM'
+[Thu Nov 26 17:32:19 UTC 2026] Creating domain key
+[Thu Nov 26 17:32:19 UTC 2026] The domain key is here: /root/.acme.sh/retinento-test.fritz.box_ecc/retinento-test.fritz.box.key
+[Thu Nov 26 17:32:19 UTC 2026] Single domain='retinento-test.fritz.box'
+[Thu Nov 26 17:32:20 UTC 2026] Getting webroot for domain='retinento-test.fritz.box'
+[Thu Nov 26 17:32:20 UTC 2026] Verifying: retinento-test.fritz.box
+[Thu Nov 26 17:32:20 UTC 2026] Standalone mode server
+[Thu Nov 26 17:32:21 UTC 2026] Success
+[Thu Nov 26 17:32:21 UTC 2026] Verification finished, beginning signing.
+[Thu Nov 26 17:32:21 UTC 2026] Let's finalize the order.
+[Thu Nov 26 17:32:21 UTC 2026] Le_OrderFinalize='https://ca.fritz.box/acme/acme/order/0GwZXwcTiByBvAx9Do8pjOE6FOIfQoKy/finalize'
+[Thu Nov 26 17:32:21 UTC 2026] Downloading cert.
+[Thu Nov 26 17:32:21 UTC 2026] Le_LinkCert='https://ca.fritz.box/acme/acme/certificate/QDPOBhIzQSpOVlghZ2toHvFiXjXWUmvZ'
+[Thu Nov 26 17:32:21 UTC 2026] Cert success.
+-----BEGIN CERTIFICATE-----
+MIICITCCAcegAwIBAgIRALm7caUW1BD7tRBy6oljspkwCgYIKoZIzj0EAwIwSDEa
+MBgGA1UEChMRU21hbGxzdGVwIEhvbWUgQ0ExKjAoBgNVBAMTIVNtYWxsc3RlcCBI
+b21lIENBIEludGVybWVkaWF0ZSBDQTAeFw0yNjExMjYxNzMxMjBaFw0yNzAyMjQx
+NzMyMjBaMCMxITAfBgNVBAMTGHJldGluZW50by10ZXN0LmZyaXR6LmJveDBZMBMG
+ByqGSM49AgEGCCqGSM49AwEHA0IABMRDb+VFE/nGAnKUaIVeirKbvVqvB0eeBg1g
+Vt7mWm9W82wD57Vw7arXymok29kGOj+fnwQeoKGnodYxkGu+CO+jgbYwgbMwDgYD
+VR0PAQH/BAQDAgeAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAdBgNV
+HQ4EFgQUfmdXiLFWw0l0DzS/vYObqV8E2qIwHwYDVR0jBBgwFoAUdAWmnnpw4UQ2
+D+L/ocw90Pve4cMwIwYDVR0RBBwwGoIYcmV0aW5lbnRvLXRlc3QuZnJpdHouYm94
+MB0GDCsGAQQBgqRkxihAAQQNMAsCAQYEBGFjbWUEADAKBggqhkjOPQQDAgNIADBF
+AiEAvTTBEAZwhn5ECoJ8FwHGdtrwbpLHSDsWqO5+sv/gPkQCIHJ/81J9ycW0LPOb
+lJhzwCjiQv2LvSDmOqHSU+IbuW+q
+-----END CERTIFICATE-----
+[Thu Nov 26 17:32:21 UTC 2026] Your cert is in: /root/.acme.sh/retinento-test.fritz.box_ecc/retinento-test.fritz.box.cer
+[Thu Nov 26 17:32:21 UTC 2026] Your cert key is in: /root/.acme.sh/retinento-test.fritz.box_ecc/retinento-test.fritz.box.key
+[Thu Nov 26 17:32:21 UTC 2026] The intermediate CA cert is in: /root/.acme.sh/retinento-test.fritz.box_ecc/ca.cer
+[Thu Nov 26 17:32:21 UTC 2026] And the full-chain cert is in: /root/.acme.sh/retinento-test.fritz.box_ecc/fullchain.cer
+root@retinento-test:~# 
+
+
+

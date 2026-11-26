@@ -153,6 +153,7 @@ Test -> liefert JSON antwort (sonst nur bei curl -k …)<br>
 `~/.acme.sh/acme.sh --version`
 
 ### Register account on Step-CA
+On the client:
 ```
 ~/.acme.sh/acme.sh \
   --register-account \
